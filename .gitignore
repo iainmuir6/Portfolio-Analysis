@@ -1,0 +1,27 @@
+# Virtual Environment Directories/Files
+bin
+lib
+share
+pyvenv.cfg
+
+# Jupyter Checkpoints
+.ipynb_checkpoints
+
+# Ignore I/0
+../PortfolioAnalysis_Old/Input/
+Output/
+Old/
+
+# Ignore Image & Data Files
+*.png
+*.jpg
+*.pdf
+*.csv
+
+# Secrets
+Input/secrets.json
+Input/constants.py
+users.csv
+
+# Other
+.gitattributes
