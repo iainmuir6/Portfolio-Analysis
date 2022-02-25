@@ -8,7 +8,7 @@ pyvenv.cfg
 .ipynb_checkpoints
 
 # Ignore I/0
-../PortfolioAnalysis_Old/Input/
+Input/
 Output/
 Old/
 
@@ -17,10 +17,15 @@ Old/
 *.jpg
 *.pdf
 *.csv
+*.html
+
+# Pycache
+*.pyc
+__pycache__/
 
 # Secrets
-Input/secrets.json
-Input/constants.py
+secrets.json
+constants.py
 users.csv
 
 # Other
