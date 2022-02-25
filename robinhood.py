@@ -7,9 +7,9 @@
 """
 
 import robin_stocks.robinhood as r
+from datetime import timedelta
 from finnhub import big_number
 from functools import partial
-from datetime import timedelta
 import datapane as dp
 import pandas as pd
 import datetime
@@ -40,6 +40,7 @@ def load_portfolio(client):
 
     :return:
     """
+    # TODO Error Handling for Tickers
 
     # ----- Build Holdings -----
     equities = client.account.build_holdings()
@@ -86,7 +87,7 @@ def robinhood_news(client, ticker):
 
     article_groups = list(
         recent_news.apply(
-            lambda row: format_article(row, 'Robinhood'),
+            lambda row: format_article(row),
             axis=1
         ).values
     )
@@ -105,6 +106,60 @@ def robinhood_news(client, ticker):
     ))
 
     return article_groups
+
+
+def format_article(article):
+    """
+
+    :param article
+    :param source
+    :return:
+    """
+
+    _, byline, _, img, date, _, source, _, title, _, url, _, _, abstract, _, _ = article
+    if byline is None or byline == "":
+        byline = source
+    date = datetime.datetime.strptime(str(date)[:-6], '%Y-%m-%d %H:%M:%S').strftime('%m/%d/%y %I:%M:%S %p')
+
+    media = dp.HTML(f"""
+        <img src="{img}" width="200"/>
+    """.strip())
+    html = dp.HTML(
+        """
+        <html>
+            <style type='text/css'>
+                h4 {
+                    text-align:left;
+                }
+                a {
+                    text-decoration:none;
+                    color:#000000;
+                }
+                p {
+                    text-align:left;
+                    font-size:14px;
+                    color=#000000;
+                }
+                .info span {
+                    font-size:12px;
+                    color=#808080;
+                }
+            </style>
+            
+            <h4><a href='""" + url + """' target="_blank">""" + title + """</a></h4>
+            <p class='info'>
+                <span><i>""" + byline + '<br>' + date + """</i></span><br><br>
+                """ + abstract + """
+            </p>
+        </html>
+        """.strip()
+    )
+
+    return dp.Group(
+        media,
+        html,
+        columns=2
+    )
 
 
 def format_related(client, id_):

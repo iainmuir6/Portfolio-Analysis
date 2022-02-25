@@ -9,7 +9,6 @@
 
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from functools import partial
 import datapane as dp
 import pandas as pd
 import requests
@@ -17,6 +16,7 @@ import datetime
 import time
 
 
+# -------------------- QUOTE --------------------
 def quote(key, ticker):
     """
     Real-time quote data for United States equities
@@ -33,18 +33,35 @@ def quote(key, ticker):
     return list(resp.values())
 
 
-def candles(key, ticker):
+def big_number(key, ticker):
+    """
+
+    """
+    close, delta, delta_pct, high, low, open_, p_close, _ = quote(key, ticker)
+
+    return dp.BigNumber(
+        heading=ticker,
+        value=f"${round(close, 2)}",
+        change=f"{round(delta_pct, 2)}%",
+        is_upward_change=True if delta_pct > 0 else False
+    )
+
+
+# -------------------- CANDLES --------------------
+def candles(key, ticker, years=1):
     """
     Get candlestick data (OHLCV) for stocks.
     ---> daily data will be adjusted for splits; intraday data will remain unadjusted.
 
     :param key
     :param ticker
+    :param years
     :return:
     """
 
+    days = years * 365
     today = datetime.date.today()
-    f = int(time.mktime((today - datetime.timedelta(365)).timetuple()))
+    f = int(time.mktime((today - datetime.timedelta(days)).timetuple()))
     t = int(time.mktime(today.timetuple()))
 
     candle = f'https://finnhub.io/api/v1/stock/candle?symbol={ticker}&resolution=D&from={f}&to={t}&token={key}'
@@ -150,6 +167,7 @@ def candlestick(df, ticker, label=None):
     )
 
 
+# -------------------- PROFILE --------------------
 def name_search(key, ticker):
     """
 
@@ -170,52 +188,6 @@ def name_search(key, ticker):
     return f'{name} ({ticker})'
 
 
-def free_stock_search(key):
-    sp500 = f'https://finnhub.io/api/v1/index/constituents?symbol=^GSPC&token={key}'
-
-    with requests.get(sp500) as r:
-        resp = r.json()
-    sp500_constituents = sorted(resp['constituents'])
-
-    # Get Candles
-    sp500_candles = list(
-        map(
-            partial(candles, key), sp500_constituents
-        )
-    )
-
-    # Get Names
-    sp500_names = list(
-        map(
-            partial(name_search, key), sp500_constituents
-        )
-    )
-    sp500_names = list(filter(None, sp500_names))
-
-    # Plot Figures
-    sp500_figures = list(
-        map(
-            candlestick, sp500_candles, sp500_constituents, sp500_names
-        )
-    )
-    sp500_figures = list(filter(None, sp500_figures))
-    return sp500_figures
-
-
-def big_number(key, ticker):
-    """
-
-    """
-    close, delta, delta_pct, high, low, open_, p_close, _ = quote(key, ticker)
-
-    return dp.BigNumber(
-        heading=ticker,
-        value=f"${round(close, 2)}",
-        change=f"{round(delta_pct, 2)}%",
-        is_upward_change=True if delta_pct > 0 else False
-    )
-
-
 def profile(client, ticker):
     """
     General information of a company
@@ -228,16 +200,3 @@ def profile(client, ticker):
     return [
         country, curr, exc, ipo, mkt_cap, name, shares, url, logo, industry
     ]
-
-
-def news(client, ticker, today):
-    """
-    List latest company news by symbol
-    ---> headline, image, summary, url
-    """
-
-    return client.company_news(
-        symbol=ticker,
-        _from=str(today - datetime.timedelta(7)),
-        to=str(today)
-    )
