@@ -13,6 +13,7 @@ import datapane as dp
 import pandas as pd
 import requests
 import datetime
+import math
 import time
 
 
@@ -48,7 +49,7 @@ def big_number(key, ticker):
 
 
 # -------------------- CANDLES --------------------
-def candles(key, ticker, years=1):
+def candles(key, ticker, years=1, resolution='D', type_='stock'):
     """
     Get candlestick data (OHLCV) for stocks.
     ---> daily data will be adjusted for splits; intraday data will remain unadjusted.
@@ -56,15 +57,23 @@ def candles(key, ticker, years=1):
     :param key
     :param ticker
     :param years
+    :param resolution
+    :param type_
     :return:
     """
 
-    days = years * 365
-    today = datetime.date.today()
-    f = int(time.mktime((today - datetime.timedelta(days)).timetuple()))
-    t = int(time.mktime(today.timetuple()))
+    if isinstance(years, int) or isinstance(years, float):
+        days = math.ceil(years * 365)
+        today = datetime.date.today()
+        f = int(time.mktime((today - datetime.timedelta(days)).timetuple()))
+        t = int(time.mktime(today.timetuple()))
+    else:
+        f, t = years
+        f = int(time.mktime(f.timetuple()))
+        t = int(time.mktime(t.timetuple()))
 
-    candle = f'https://finnhub.io/api/v1/stock/candle?symbol={ticker}&resolution=D&from={f}&to={t}&token={key}'
+    candle = f'https://finnhub.io/' \
+             f'api/v1/{type_}/candle?symbol={ticker}&resolution={resolution}&from={f}&to={t}&token={key}'
     with requests.get(candle) as r:
         resp = r.json()
 
