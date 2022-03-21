@@ -32,7 +32,13 @@ def get_market_opens(client, start, present):
     )
 
     if os.path.exists(f'{ROOT}/Input/market_open.csv'):
-        is_open = pd.read_csv(f'{ROOT}/Input/market_open.csv')
+        is_open = pd.read_csv(
+            f'{ROOT}/Input/market_open.csv'
+        )
+        is_open['date'] = pd.to_datetime(
+            is_open['date'],
+            format='%Y-%m-%d'
+        ).dt.date
         market_open = pd.concat(
             [market_open, is_open]
         )
@@ -41,6 +47,13 @@ def get_market_opens(client, start, present):
         ).sort_values(
             by='date',
             ascending=True
-        ).reset_index()
+        ).reset_index(
+            drop=True
+        )
 
-    market_open.to_csv(f'{ROOT}/Input/market_open.csv')
+    market_open.set_index(
+        'date'
+    ).to_csv(
+        f'{ROOT}/Input/market_open.csv'
+    )
+    return market_open
