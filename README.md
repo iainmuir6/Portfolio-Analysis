@@ -4,8 +4,8 @@
  
 ## Purpose
 
-...
+Automate reporting for any Robinhood portfolio, which highlight individual and aggregate holdings daily performance, security-related news, and eventually portfolio-level analysis.
 
 ## Description
 
-...
+Utilizes Datapane to create a portfolio-specific daily report. Here are some snippets of an example report:
