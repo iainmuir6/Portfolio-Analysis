@@ -105,7 +105,6 @@ def login(username, password, expiresIn=86400, scope="internal", by_sms=True, st
         url,
         payload
     )
-    print(data)
 
     # Handle case where mfa or challenge is required.
     if "mfa_required" in data:
@@ -161,7 +160,6 @@ def login(username, password, expiresIn=86400, scope="internal", by_sms=True, st
     else:
         raise Exception(data["detail"])
 
-    print(data)
     return data
 
 
@@ -173,10 +171,9 @@ def authenticate_(username, password):
     :return:
     """
 
-    print(username)
     pickle_ = username[:username.find('@')]
     pickle_name = f'{ROOT}/Input/robinhood_{pickle_}.pickle'
-    print(pickle_name)
+
     r.login(
         username=username,
         password=password,
