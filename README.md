@@ -1,4 +1,7 @@
-<img src="https://upload.wikimedia.org/wikipedia/en/d/da/Robinhood_%28company%29_logo.svg" width="250"/>
+<p align="center">
+ <img src="https://upload.wikimedia.org/wikipedia/en/d/da/Robinhood_%28company%29_logo.svg" width="250"/> <br /><br />
+ <img src="https://datapane.com/static/datapane-logo-dark.png" width="250"/>
+</p>
 
 # End of Day Portfolio Analysis
  
@@ -10,7 +13,7 @@ Automate reporting for any Robinhood portfolio, which highlight individual and a
 
 Utilizes Datapane to create a portfolio-specific daily report. Here are some snippets of an example report:
 
-<span>
+<p align="center">
  <img src="https://github.com/iainmuir6/Portfolio-Analysis/blob/main/snippets/holdings.png" width="300"/>
  <img src="https://github.com/iainmuir6/Portfolio-Analysis/blob/main/snippets/news.png" width="650"/>
-</span>
+</p>
