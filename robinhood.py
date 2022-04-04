@@ -256,7 +256,7 @@ def robinhood_news(client, ticker):
         related_htmls
     ))
 
-    return article_groups
+    return article_groups, list(recent_news['published'])
 
 
 def format_article(article):
